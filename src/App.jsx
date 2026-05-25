@@ -66,22 +66,28 @@ function App() {
       setQuestions(parsedQuestions);
     } catch (err) {
       setError("Something went wrong. Please try again.");
+    } finally {
+      setLoading(false);
     }
-
-    setLoading(false);
   };
 
-  const copyQuestions = () => {
-    navigator.clipboard.writeText(
-      questions.join("\n")
-    );
+  const copyQuestions = async () => {
+    try {
+      await navigator.clipboard.writeText(
+        questions.join("\n")
+      );
+
+      alert("Questions copied successfully!");
+    } catch (err) {
+      alert("Failed to copy questions.");
+    }
   };
 
   return (
     <div className="min-h-screen bg-slate-900 flex items-center justify-center p-6">
       <div className="bg-slate-800 p-8 rounded-2xl shadow-2xl w-full max-w-2xl">
 
-        <h1 className="text-4xl font-bold mb-2 text-center">
+        <h1 className="text-4xl font-bold mb-2 text-center text-white">
           AI Interview Question Generator
         </h1>
 
@@ -105,7 +111,7 @@ function App() {
         <button
           onClick={generateQuestions}
           disabled={loading}
-          className="w-full bg-blue-600 hover:bg-blue-700 transition p-4 rounded-xl font-semibold disabled:opacity-50"
+          className="w-full bg-blue-600 hover:bg-blue-700 transition p-4 rounded-xl font-semibold disabled:opacity-50 text-white"
         >
           {loading ? (
             <span className="animate-pulse">
@@ -122,7 +128,7 @@ function App() {
 
             <button
               onClick={generateQuestions}
-              className="bg-red-500 hover:bg-red-600 transition px-4 py-2 rounded-lg mt-3"
+              className="bg-red-500 hover:bg-red-600 transition px-4 py-2 rounded-lg mt-3 text-white"
             >
               Retry
             </button>
@@ -133,7 +139,7 @@ function App() {
           {questions.map((question, index) => (
             <div
               key={index}
-              className="bg-slate-700 p-4 rounded-xl"
+              className="bg-slate-700 p-4 rounded-xl text-white"
             >
               {question}
             </div>
@@ -143,7 +149,7 @@ function App() {
         {questions.length > 0 && (
           <button
             onClick={copyQuestions}
-            className="bg-green-600 hover:bg-green-700 transition px-4 py-3 rounded-xl mt-6 w-full"
+            className="bg-green-600 hover:bg-green-700 transition px-4 py-3 rounded-xl mt-6 w-full text-white"
           >
             Copy Questions
           </button>
