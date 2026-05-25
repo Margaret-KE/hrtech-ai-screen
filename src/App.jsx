@@ -77,9 +77,9 @@ function App() {
         questions.join("\n")
       );
 
-      alert("Questions copied successfully!");
+      console.log("Questions copied");
     } catch (err) {
-      alert("Failed to copy questions.");
+      console.error("Copy failed", err);
     }
   };
 
