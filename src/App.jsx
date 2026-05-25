@@ -23,6 +23,11 @@ function App() {
       Generate 3 thoughtful and role-specific interview questions for a candidate applying as:
       "${jobTitle}"
 
+      The questions should:
+      - assess communication
+      - assess problem solving
+      - assess practical experience
+
       Return only the questions as a numbered list.
       `;
 
@@ -45,6 +50,10 @@ function App() {
         }
       );
 
+      if (!response.ok) {
+        throw new Error("API request failed");
+      }
+
       const data = await response.json();
 
       const text =
@@ -62,9 +71,16 @@ function App() {
     setLoading(false);
   };
 
+  const copyQuestions = () => {
+    navigator.clipboard.writeText(
+      questions.join("\n")
+    );
+  };
+
   return (
     <div className="min-h-screen bg-slate-900 flex items-center justify-center p-6">
       <div className="bg-slate-800 p-8 rounded-2xl shadow-2xl w-full max-w-2xl">
+
         <h1 className="text-4xl font-bold mb-2 text-center">
           AI Interview Question Generator
         </h1>
@@ -78,18 +94,39 @@ function App() {
           placeholder="Enter job title..."
           value={jobTitle}
           onChange={(e) => setJobTitle(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") {
+              generateQuestions();
+            }
+          }}
           className="w-full p-4 rounded-xl bg-slate-700 text-white outline-none mb-4"
         />
 
         <button
           onClick={generateQuestions}
-          className="w-full bg-blue-600 hover:bg-blue-700 transition p-4 rounded-xl font-semibold"
+          disabled={loading}
+          className="w-full bg-blue-600 hover:bg-blue-700 transition p-4 rounded-xl font-semibold disabled:opacity-50"
         >
-          {loading ? "Generating..." : "Generate Questions"}
+          {loading ? (
+            <span className="animate-pulse">
+              Generating Questions...
+            </span>
+          ) : (
+            "Generate Questions"
+          )}
         </button>
 
         {error && (
-          <p className="text-red-400 mt-4">{error}</p>
+          <div className="mt-4">
+            <p className="text-red-400">{error}</p>
+
+            <button
+              onClick={generateQuestions}
+              className="bg-red-500 hover:bg-red-600 transition px-4 py-2 rounded-lg mt-3"
+            >
+              Retry
+            </button>
+          </div>
         )}
 
         <div className="mt-6 space-y-4">
@@ -102,6 +139,15 @@ function App() {
             </div>
           ))}
         </div>
+
+        {questions.length > 0 && (
+          <button
+            onClick={copyQuestions}
+            className="bg-green-600 hover:bg-green-700 transition px-4 py-3 rounded-xl mt-6 w-full"
+          >
+            Copy Questions
+          </button>
+        )}
       </div>
     </div>
   );
